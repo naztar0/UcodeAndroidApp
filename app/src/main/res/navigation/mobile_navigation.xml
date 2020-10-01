@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.ucode.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/nav_activity"
+        android:name="com.example.ucode.ui.activity.ActivityFragment"
+        android:label="@string/activity"
+        tools:layout="@layout/fragment_activity" />
+
+    <fragment
+        android:id="@+id/nav_assessments"
+        android:name="com.example.ucode.ui.assessments.AssessmentsFragment"
+        android:label="@string/menu_assessments"
+        tools:layout="@layout/fragment_assessment" />
+
+    <fragment
+        android:id="@+id/nav_my_challenges"
+        android:name="com.example.ucode.ui.my_challenges.MyChallengesFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_my_challenges" />
+
+    <fragment
+        android:id="@+id/nav_all_challenges"
+        android:name="com.example.ucode.ui.all_challenges.AllChallengesFragment"
+        android:label="@string/activity"
+        tools:layout="@layout/fragment_all_challenges" />
+
+    <fragment
+        android:id="@+id/nav_slots"
+        android:name="com.example.ucode.ui.slots.SlotsFragment"
+        android:label="@string/menu_assessments"
+        tools:layout="@layout/fragment_slots" />
+
+    <fragment
+        android:id="@+id/nav_media"
+        android:name="com.example.ucode.ui.media.MediaFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_media" />
+
+    <fragment
+        android:id="@+id/nav_cluster"
+        android:name="com.example.ucode.ui.cluster.ClusterFragment"
+        android:label="@string/activity"
+        tools:layout="@layout/fragment_cluster" />
+
+    <fragment
+        android:id="@+id/nav_events"
+        android:name="com.example.ucode.ui.events.EventsFragment"
+        android:label="@string/menu_assessments"
+        tools:layout="@layout/fragment_events" />
+</navigation>

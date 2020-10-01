@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_baseline_account_circle_24"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_activity"
+            android:icon="@drawable/ic_baseline_history_24"
+            android:title="@string/activity" />
+        <item
+            android:id="@+id/nav_assessments"
+            android:icon="@drawable/ic_baseline_assessment_24"
+            android:title="@string/menu_assessments" />
+        <item
+            android:id="@+id/nav_my_challenges"
+            android:icon="@drawable/ic_baseline_assignment_24"
+            android:title="@string/menu_my_challenges"/>
+        <item
+            android:id="@+id/nav_all_challenges"
+            android:icon="@drawable/ic_dashboard_black_24dp"
+            android:title="@string/menu_all_challenges"/>
+        <item
+            android:id="@+id/nav_slots"
+            android:icon="@drawable/ic_baseline_event_note_24"
+            android:title="@string/menu_slots"/>
+        <item
+            android:id="@+id/nav_media"
+            android:icon="@drawable/ic_baseline_perm_media_24"
+            android:title="@string/menu_media"/>
+        <item
+            android:id="@+id/nav_cluster"
+            android:icon="@drawable/ic_baseline_business_24"
+            android:title="@string/menu_cluster"/>
+        <item
+            android:id="@+id/nav_events"
+            android:icon="@drawable/ic_baseline_event_24"
+            android:title="@string/menu_events"/>
+    </group>
+</menu>
