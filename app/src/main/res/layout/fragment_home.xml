@@ -36,7 +36,7 @@
                             app:cardCornerRadius="75sp">
 
                             <ImageView
-                                android:id="@+id/imageView"
+                                android:id="@+id/profile_image"
                                 android:layout_width="150sp"
                                 android:layout_height="150sp"
                                 android:contentDescription="@string/description_avatar"

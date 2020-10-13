@@ -1,5 +1,7 @@
 package com.example.ucode;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -12,10 +14,12 @@ import android.widget.Toast;
 import com.example.ucode.ui.activity.ActivityFragment;
 import com.example.ucode.ui.assessments.AssessmentsFragment;
 import com.example.ucode.ui.home.HomeFragment;
+import com.example.ucode.ui.login.LoginActivity;
 import com.example.ucode.ui.my_challenges.MyChallengesFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.Gson;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -41,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Authorization authorization = getAuthorization();
+        if (authorization == null) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            MainActivity.this.startActivity(intent);
+        }
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -56,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
     }
 
     @Override
@@ -96,5 +106,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return user;
+    }
+    public Authorization getAuthorization() {
+        SharedPreferences sharedPreferences = getSharedPreferences("auth", MODE_PRIVATE);
+        String username = sharedPreferences.getString("username", null);
+        String password = sharedPreferences.getString("password", null);
+        if (username == null || password == null)
+            return null;
+        return new Authorization(username, password);
     }
 }

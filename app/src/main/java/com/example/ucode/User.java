@@ -20,7 +20,7 @@ public class User implements Serializable{
         this.location = location;
         this.adventure = adventure;
         this.level = level;
-        this.photoUrl = photoUrl;
+        this.photoUrl = "https://lms.ucode.world/api/" + photoUrl;
         this.phone = phone;
         this.tokens = tokens;
         this.lives = lives;
