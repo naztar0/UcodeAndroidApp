@@ -1,4 +1,4 @@
-/*package com.example.ucode.ui.activity;
+package com.example.ucode.ui.activity;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -7,15 +7,20 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.icu.text.SimpleDateFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +31,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.ucode.ActivityData;
 import com.example.ucode.Authorization;
 import com.example.ucode.CircularProgressBar;
 import com.example.ucode.GrayLine;
@@ -43,9 +49,13 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public class ActivityFragment extends Fragment {
 
@@ -75,7 +85,7 @@ public class ActivityFragment extends Fragment {
         getJson.execute(request_url, "authorization", authorization.getToken());
 
         // refresh
-        swipeRefreshLayout = root.findViewById(R.id.profile_refresh);
+        swipeRefreshLayout = root.findViewById(R.id.activity_refresh);
         swipeRefreshLayout.setOnRefreshListener(() ->
                 refreshData(getActivity(), getContext(), root, request_url, "authorization", authorization.getToken()));
 
@@ -103,7 +113,7 @@ public class ActivityFragment extends Fragment {
 
 
         ProgressDialog pd;
-        User user = new User();
+        ActivityData activityData = new ActivityData();
 
         @Override
         protected void onPreExecute() {
@@ -115,8 +125,8 @@ public class ActivityFragment extends Fragment {
             }
 
             if (!refresh) {
-                user = (User) MyUtility.getData();
-                if (user != null) {
+                activityData = (ActivityData) MyUtility.getData(R.string.activity_cache_path);
+                if (activityData != null) {
                     cached = true;
                     return;
                 }
@@ -125,7 +135,7 @@ public class ActivityFragment extends Fragment {
                 pd.setCancelable(false);
                 pd.show();
             }
-            user = new User();
+            activityData = new ActivityData();
         }
 
         @Override
@@ -152,7 +162,7 @@ public class ActivityFragment extends Fragment {
             if (activity == null || activity.isFinishing()) {
                 return;
             }
-            SwipeRefreshLayout swipeRefreshLayout1 = mActivity.get().findViewById(R.id.profile_refresh);
+            SwipeRefreshLayout swipeRefreshLayout1 = mActivity.get().findViewById(R.id.activity_refresh);
 
             if (!cached) {
                 if (!refresh) {
@@ -164,7 +174,7 @@ public class ActivityFragment extends Fragment {
                 }
 
                 if (result == null) {
-                    Toast.makeText(mActivity.get(), "Can't get profile data...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mActivity.get(), "Can't get activity data...", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -179,67 +189,96 @@ public class ActivityFragment extends Fragment {
                     return;
                 }
 
-                String username = null, first_name = null, last_name = null, email = null,
-                        location = null, adventure = null, photoUrl = null, phone = null;
-                int user_id = 0, tokens = 0, lives = 0, toxic = 0;
-                double level = 0, assessor_mark = 0;
-                boolean n_mail = false, n_push = false, n_slack = false;
-                ArrayList<Object[]> skills_arr = null;
+                ArrayList<Object[]> activities_arr = null;
                 try {
-                    user_id = jsonData.getInt("id");
-                    username = jsonData.getString("username");
-                    first_name = jsonData.getString("first_name");
-                    last_name = jsonData.getString("last_name");
-                    email = jsonData.getString("email");
+                    JSONArray jsonArray = jsonData.getJSONArray("results");
 
-                    JSONArray location_temp = jsonData.getJSONArray("location_users");
-                    location = ((JSONObject) location_temp.get(0)).getJSONObject("location").getString("name");
-
-                    JSONArray adventure_temp = jsonData.getJSONArray("adventure_users");
-                    adventure = ((JSONObject) adventure_temp.get(0)).getString("adventure_name");
-                    level = ((JSONObject) adventure_temp.get(0)).getDouble("level");
-
-                    photoUrl = jsonData.getString("photo_url");
-                    phone = jsonData.getString("phone");
-                    tokens = jsonData.getInt("tokens");
-                    lives = jsonData.getInt("lives");
-                    assessor_mark = jsonData.getDouble("assessor_mark");
-                    toxic = jsonData.getInt("toxic_feedbacks");
-
-                    JSONObject notifications = jsonData.getJSONObject("notifications_settings");
-                    n_mail = notifications.getBoolean("mail");
-                    n_push = notifications.getBoolean("push");
-                    n_slack = notifications.getBoolean("slack");
-
-                    JSONArray jsonArray = jsonData.getJSONArray("skill_users");
-                    skills_arr = new ArrayList<>();
+                    activities_arr = new ArrayList<>();
                     for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject skill = jsonArray.getJSONObject(i);
-                        int progress = skill.getInt("experience");
-                        JSONObject skill_values = skill.getJSONObject("skill");
-                        int max_value = skill_values.getInt("max_value");
-                        String skill_name = skill_values.getString("name");
-                        Object[] arr = new Object[3];
-                        arr[0] = skill_name;
-                        arr[1] = progress;
-                        arr[2] = max_value;
-                        skills_arr.add(arr);
+                        JSONObject res = jsonArray.getJSONObject(i);
+                        String created = res.getString("created_at");
+                        String message = res.getString("message");
+                        String type = res.getString("type");
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat sdf_res = new SimpleDateFormat("dd.MM.yyyy");
+                        Date date = sdf.parse(created.substring(0, created.indexOf("T")));
+                        String created_date = sdf_res.format(date);
+                        String created_time = created.substring(created.indexOf("T") + 1, created.indexOf("T") + 6);
+                        message = message.substring(message.indexOf(" ") + 1);
+
+                        String[] arr = new String[4];
+                        arr[0] = message;
+                        arr[1] = type;
+                        arr[2] = created_date;
+                        arr[3] = created_time;
+                        activities_arr.add(arr);
                     }
-                    Comparator<Object[]> comparator = (Object[] a, Object[] b) -> ((Integer) b[1]).compareTo((int) a[1]);
-                    Collections.sort(skills_arr, comparator);
-                } catch (JSONException e) {
+                } catch (JSONException | ParseException e) {
                     e.printStackTrace();
                 }
 
-                user.setProfileData(user_id, username, first_name, last_name, email,
-                        location, adventure, level, photoUrl, phone,
-                        tokens, lives, assessor_mark, toxic, n_mail, n_push, n_slack, skills_arr);
+                activityData.setActivityData(activities_arr);
 
-                MyUtility.saveData(user);
+                MyUtility.saveData(activityData, R.string.activity_cache_path);
                 if (newToken)
                     MyUtility.saveToken(authorization);
             }
+
+            // displaying list
+            ArrayList<String> messages = new ArrayList<>();
+            ArrayList<String> emoji_arr = new ArrayList<>();
+            ArrayList<String> dates = new ArrayList<>();
+
+            ArrayList<Object[]> data_arr = activityData.getArrayList();
+            for (int i = 0; i < data_arr.size(); i++) {
+                messages.add((String)data_arr.get(i)[0]);
+                dates.add(data_arr.get(i)[3] + " " + data_arr.get(i)[2]);
+                switch ((String) data_arr.get(i)[1]) {
+                    case "validate_challenge":
+                        emoji_arr.add("\uD83C\uDF89");
+                        break;
+                    case "level_up":
+                        emoji_arr.add("\uD83D\uDD1D");
+                        break;
+                    case "defense_assessment":
+                        emoji_arr.add("\uD83D\uDCE5");
+                        break;
+                    case "fail_challenge":
+                        emoji_arr.add("❌");
+                        break;
+                    case "accept_challenge":
+                        emoji_arr.add("\uD83D\uDCAA");
+                        break;
+                    case "made_assessment":
+                        emoji_arr.add("\uD83D\uDCE4");
+                        break;
+                    default:
+                        emoji_arr.add(" ");
+                        break;
+                }
+            }
+
+            List<HashMap<String,String>> hashMaps = new ArrayList<>();
+            for (int i = 0; i < 20; i++){
+                HashMap<String, String> hm = new HashMap<>();
+                hm.put("emoji", emoji_arr.get(i));
+                hm.put("name", messages.get(i));
+                hm.put("date", dates.get(i));
+                hashMaps.add(hm);
+            }
+
+            String[] from = {"emoji","name","date"};
+            int[] to = { R.id.activity_emoji,R.id.activity_message,R.id.activity_datetime};
+
+            ListView listView = root.get().findViewById(R.id.activity_list_view);
+            SimpleAdapter simpleAdapter = new SimpleAdapter(mContext.get(), hashMaps, R.layout.activity_item_layout, from, to);
+            listView.setAdapter(simpleAdapter);
+
+
+            cached = false;
+            refresh = false;
         }
     }
 
-}*/
+}

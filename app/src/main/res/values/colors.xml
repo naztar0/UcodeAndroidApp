@@ -6,6 +6,7 @@
     <color name="grey">#808080</color>
     <color name="light_grey">#AAAAAA</color>
     <color name="progressBack">#DDD</color>
+    <color name="light_blue">#BBDEFB</color>
     <color name="progressFront">#36B4C8</color>
     <color name="skill_progress">#1f77b4</color>
     <color name="profile_challenges_bg_gr_start">#9A83C1</color>

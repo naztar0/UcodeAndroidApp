@@ -111,7 +111,7 @@ public class HomeFragment extends Fragment {
             }
 
             if (!refresh) {
-                user = (User) MyUtility.getData();
+                user = (User) MyUtility.getData(R.string.home_cache_path);
                 if (user != null) {
                     cached = true;
                     return;
@@ -231,7 +231,7 @@ public class HomeFragment extends Fragment {
                         location, adventure, level, photoUrl, phone,
                         tokens, lives, assessor_mark, toxic, n_mail, n_push, n_slack, skills_arr);
 
-                MyUtility.saveData(user);
+                MyUtility.saveData(user, R.string.home_cache_path);
                 if (newToken)
                     MyUtility.saveToken(authorization);
             }

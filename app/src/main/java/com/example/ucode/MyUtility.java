@@ -44,8 +44,8 @@ public class MyUtility {
     }
 
 
-    public static void saveData(Object object) {
-        final File file = new File(mResources.getString(R.string.home_cache_path));
+    public static void saveData(Object object, int string_id) {
+        final File file = new File(mResources.getString(string_id));
 
         try (FileOutputStream fos = new FileOutputStream(file);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
@@ -55,8 +55,8 @@ public class MyUtility {
         }
     }
 
-    public static Object getData() {
-        final File suspend_f = new File(mResources.getString(R.string.home_cache_path));
+    public static Object getData(int string_id) {
+        final File suspend_f = new File(mResources.getString(string_id));
 
         Object object = null;
 
