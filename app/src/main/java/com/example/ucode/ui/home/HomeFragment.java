@@ -4,13 +4,11 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,22 +34,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment {
 
@@ -68,8 +58,9 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_home, container, false);
         mResources = getResources();
+        MyUtility myUtility = new MyUtility(getResources(), getContext(), getActivity());
 
-        try { authorize(); }
+        try { authorization = myUtility.authorize(); }
         catch (Exception ignored) {}
         if (authorization == null)
             return root;
@@ -87,132 +78,25 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
-    private static void saveData(User user) {
-        final File file = new File(mResources.getString(R.string.profile_cash_path));
-
-        try (FileOutputStream fos = new FileOutputStream(file);
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(user);
-        } catch (Exception i) {
-            Log.d("ERROR", String.valueOf(i));
-        }
-    }
-
-    private static User getData() {
-        final File suspend_f = new File(mResources.getString(R.string.profile_cash_path));
-
-        User user = null;
-
-        try (FileInputStream fis = new FileInputStream(suspend_f); ObjectInputStream is = new ObjectInputStream(fis)) {
-            user = (User) is.readObject();
-        } catch (java.io.FileNotFoundException e) {
-            return null;
-        } catch (Exception i) {
-            Log.d("ERROR", String.valueOf(i));
-        }
-
-        return user;
-    }
-
-    private static void saveToken() {
-        final File file = new File(mResources.getString(R.string.profile_token_path));
-
-        try (FileOutputStream fos = new FileOutputStream(file);
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(authorization.getToken());
-        } catch (Exception i) {
-            Log.d("ERROR", String.valueOf(i));
-        }
-    }
-
-    private static String getToken() {
-        final File suspend_f = new File(mResources.getString(R.string.profile_token_path));
-        String token = null;
-        try (FileInputStream fis = new FileInputStream(suspend_f); ObjectInputStream is = new ObjectInputStream(fis)) {
-            token = (String) is.readObject();
-        } catch (java.io.FileNotFoundException e) {
-            return null;
-        } catch (Exception i) {
-            Log.d("ERROR", String.valueOf(i));
-        }
-        return token;
-    }
-
     private void refreshData(Activity activity, Context context, View view, String... params) {
         refresh = true;
         GetJson getJson = new GetJson(activity, context, view);
         getJson.execute(params[0], params[1], params[2]);
     }
 
-    private void authorize() throws InterruptedException, ExecutionException, JSONException {
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE);
-        String username = sharedPreferences.getString("username", null);
-        String password = sharedPreferences.getString("password", null);
-        if (username == null || password == null)
-            return;
-        authorization = new Authorization(username, password);
-        String token = getToken();
-        if (token != null)
-            authorization.setToken(token);
-        else
-            authorization.generateAuthToken();
-    }
-
-    /*private static void onActivityClick(View v, Activity mActivity) {
-        Toast.makeText(mActivity, "Show activity", Toast.LENGTH_SHORT).show();
-    }*/
-
-    private static String fetchData(String... params) {
-        HttpURLConnection connection = null;
-        BufferedReader reader = null;
-
-        try {
-            URL url = new URL(params[0]);
-            connection = (HttpURLConnection) url.openConnection();
-            for (int i = 1; i < (params.length - 1); i += 2)
-                connection.setRequestProperty(params[i], params[i + 1]);
-            connection.connect();
-
-
-            InputStream stream = connection.getInputStream();
-            reader = new BufferedReader(new InputStreamReader(stream));
-
-            StringBuilder buffer = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null)
-                buffer.append(line).append("\n");
-
-            return buffer.toString();
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
     static class GetJson extends AsyncTask<String, String, String> {
         private WeakReference<Activity> mActivity;
         private WeakReference<Context> mContext;
         private WeakReference<View> root;
+        private MyUtility myUtility;
 
         public GetJson(Activity activity, Context context, View view) {
             mActivity = new WeakReference<>(activity);
             mContext = new WeakReference<>(context);
             root = new WeakReference<>(view);
+            myUtility = new MyUtility(mResources, mContext.get(), mActivity.get());
         }
+
 
         ProgressDialog pd;
         User user = new User();
@@ -227,7 +111,7 @@ public class HomeFragment extends Fragment {
             }
 
             if (!refresh) {
-                user = getData();
+                user = (User) MyUtility.getData();
                 if (user != null) {
                     cached = true;
                     return;
@@ -245,11 +129,11 @@ public class HomeFragment extends Fragment {
             if (cached)
                 return "";
 
-            String result = fetchData(params);
+            String result = MyUtility.fetchData(params);
             if (result == null) {
                 try {authorization.generateAuthToken();}
                 catch (Exception ignore) {}
-                result = fetchData(params[0], params[1], authorization.getToken());
+                result = MyUtility.fetchData(params[0], params[1], authorization.getToken());
                 if (result != null)
                     newToken = true;
             }
@@ -275,7 +159,6 @@ public class HomeFragment extends Fragment {
                         swipeRefreshLayout1.setRefreshing(false);
                 }
 
-                /////////////////////////////
                 if (result == null) {
                     Toast.makeText(mActivity.get(), "Can't get profile data...", Toast.LENGTH_LONG).show();
                     return;
@@ -348,9 +231,9 @@ public class HomeFragment extends Fragment {
                         location, adventure, level, photoUrl, phone,
                         tokens, lives, assessor_mark, toxic, n_mail, n_push, n_slack, skills_arr);
 
-                saveData(user);
+                MyUtility.saveData(user);
                 if (newToken)
-                    saveToken();
+                    MyUtility.saveToken(authorization);
             }
             // profile image
             final GetImageBitmap getImageBitmap = new GetImageBitmap(root.get());
@@ -358,13 +241,7 @@ public class HomeFragment extends Fragment {
 
             // progress bar
             int progress = (int) (user.LEVEL() % 1 * 100);
-            /*ProgressBar progressBar = root.get().findViewById(R.id.progress_profile);
-            ObjectAnimator animation1 = ObjectAnimator.ofInt(progressBar, "progress", 0, progress); // progress
-            animation1.setDuration(1800); // in milliseconds
-            animation1.setInterpolator(new DecelerateInterpolator());
-            animation1.start();*/
 
-            MyUtility myUtility = new MyUtility(mResources, mContext.get());
             CircularProgressBar circularProgressBar = root.get().findViewById(R.id.circular_progress);
             circularProgressBar.setAnimationDuration(1900);
             circularProgressBar.setProgressWidth((int)myUtility.dpToPx(6));

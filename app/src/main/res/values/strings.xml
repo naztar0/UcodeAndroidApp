@@ -15,9 +15,10 @@
     <string name="menu_media">Media</string>
     <string name="menu_cluster">Cluster</string>
     <string name="menu_events">Events</string>
-    <string name="auth_data_cash_path">data/data/com.example.ucode/cache/auth.data</string>
-    <string name="profile_cash_path">data/data/com.example.ucode/cache/profile.data</string>
+    <string name="auth_data_cache_path">data/data/com.example.ucode/cache/auth.data</string>
     <string name="profile_token_path">data/data/com.example.ucode/cache/token.data</string>
+    <string name="home_cache_path">data/data/com.example.ucode/cache/home.data</string>
+    <string name="activity_cache_path">data/data/com.example.ucode/cache/activity.data</string>
     <string name="app_name">Ucode</string>
     <string name="title_home">Home</string>
     <string name="title_challenges">Challenges</string>

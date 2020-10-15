@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public User getData() {
-        final File suspend_f = new File(getResources().getString(R.string.profile_cash_path));
+        final File suspend_f = new File(getResources().getString(R.string.home_cache_path));
 
         User user = null;
 
