@@ -4,13 +4,10 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,31 +15,22 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
-import android.animation.ObjectAnimator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.ucode.Authorization;
+import com.example.ucode.CircularProgressBar;
 import com.example.ucode.GrayLine;
-import com.example.ucode.MainActivity;
 import com.example.ucode.R;
-import com.example.ucode.ShadowBottom;
 import com.example.ucode.User;
+import com.example.ucode.MyUtility;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,6 +48,9 @@ import java.io.ObjectOutputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
 
 public class HomeFragment extends Fragment {
@@ -85,17 +76,13 @@ public class HomeFragment extends Fragment {
 
         final String request_url = "https://lms.ucode.world/api/v0/frontend/user/self/";
 
-        final GetJson getJson = new GetJson(getActivity(), root);
+        final GetJson getJson = new GetJson(getActivity(), getContext(), root);
         getJson.execute(request_url, "authorization", authorization.getToken());
 
         // refresh
         swipeRefreshLayout = root.findViewById(R.id.profile_refresh);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshData(getActivity(), root, request_url, "authorization", authorization.getToken());
-            }
-        });
+        swipeRefreshLayout.setOnRefreshListener(() ->
+                refreshData(getActivity(), getContext(), root, request_url, "authorization", authorization.getToken()));
 
         return root;
     }
@@ -151,9 +138,9 @@ public class HomeFragment extends Fragment {
         return token;
     }
 
-    private void refreshData(Activity activity, View view, String... params) {
+    private void refreshData(Activity activity, Context context, View view, String... params) {
         refresh = true;
-        GetJson getJson = new GetJson(activity, view);
+        GetJson getJson = new GetJson(activity, context, view);
         getJson.execute(params[0], params[1], params[2]);
     }
 
@@ -171,9 +158,9 @@ public class HomeFragment extends Fragment {
             authorization.generateAuthToken();
     }
 
-    private static void onActivityClick(View v, Activity mActivity) {
+    /*private static void onActivityClick(View v, Activity mActivity) {
         Toast.makeText(mActivity, "Show activity", Toast.LENGTH_SHORT).show();
-    }
+    }*/
 
     private static String fetchData(String... params) {
         HttpURLConnection connection = null;
@@ -218,10 +205,12 @@ public class HomeFragment extends Fragment {
 
     static class GetJson extends AsyncTask<String, String, String> {
         private WeakReference<Activity> mActivity;
+        private WeakReference<Context> mContext;
         private WeakReference<View> root;
 
-        public GetJson(Activity activity, View view) {
+        public GetJson(Activity activity, Context context, View view) {
             mActivity = new WeakReference<>(activity);
+            mContext = new WeakReference<>(context);
             root = new WeakReference<>(view);
         }
 
@@ -308,6 +297,7 @@ public class HomeFragment extends Fragment {
                 int user_id = 0, tokens = 0, lives = 0, toxic = 0;
                 double level = 0, assessor_mark = 0;
                 boolean n_mail = false, n_push = false, n_slack = false;
+                ArrayList<Object[]> skills_arr = null;
                 try {
                     user_id = jsonData.getInt("id");
                     username = jsonData.getString("username");
@@ -333,13 +323,30 @@ public class HomeFragment extends Fragment {
                     n_mail = notifications.getBoolean("mail");
                     n_push = notifications.getBoolean("push");
                     n_slack = notifications.getBoolean("slack");
+
+                    JSONArray jsonArray = jsonData.getJSONArray("skill_users");
+                    skills_arr = new ArrayList<>();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject skill = jsonArray.getJSONObject(i);
+                        int progress = skill.getInt("experience");
+                        JSONObject skill_values = skill.getJSONObject("skill");
+                        int max_value = skill_values.getInt("max_value");
+                        String skill_name = skill_values.getString("name");
+                        Object[] arr = new Object[3];
+                        arr[0] = skill_name;
+                        arr[1] = progress;
+                        arr[2] = max_value;
+                        skills_arr.add(arr);
+                    }
+                    Comparator<Object[]> comparator = (Object[] a, Object[] b) -> ((Integer)b[1]).compareTo((int)a[1]);
+                    Collections.sort(skills_arr, comparator);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 user.setProfileData(user_id, username, first_name, last_name, email,
                         location, adventure, level, photoUrl, phone,
-                        tokens, lives, assessor_mark, toxic, n_mail, n_push, n_slack);
+                        tokens, lives, assessor_mark, toxic, n_mail, n_push, n_slack, skills_arr);
 
                 saveData(user);
                 if (newToken)
@@ -351,27 +358,37 @@ public class HomeFragment extends Fragment {
 
             // progress bar
             int progress = (int) (user.LEVEL() % 1 * 100);
-            ProgressBar progressBar = root.get().findViewById(R.id.progress_profile);
+            /*ProgressBar progressBar = root.get().findViewById(R.id.progress_profile);
             ObjectAnimator animation1 = ObjectAnimator.ofInt(progressBar, "progress", 0, progress); // progress
             animation1.setDuration(1800); // in milliseconds
             animation1.setInterpolator(new DecelerateInterpolator());
-            animation1.start();
+            animation1.start();*/
+
+            MyUtility myUtility = new MyUtility(mResources, mContext.get());
+            CircularProgressBar circularProgressBar = root.get().findViewById(R.id.circular_progress);
+            circularProgressBar.setAnimationDuration(1900);
+            circularProgressBar.setProgressWidth((int)myUtility.dpToPx(6));
+            circularProgressBar.setProgress(progress);
+            circularProgressBar.setProgressColor(myUtility.parseColor(R.color.progressFront));
 
             // progress text
             final TextView progress_text = root.get().findViewById(R.id.profile_progress_text);
             ValueAnimator animation2 = ValueAnimator.ofInt(0, progress * 3 / 4, progress);
             animation2.setDuration(2000);
-            animation1.setInterpolator(new DecelerateInterpolator());
-            animation2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    String progress_value = animation.getAnimatedValue().toString() + " %";
-                    progress_text.setText(progress_value);
-                }
+            animation2.setInterpolator(new DecelerateInterpolator());
+            animation2.addUpdateListener(animation -> {
+                String progress_value = animation.getAnimatedValue().toString() + "%";
+                progress_text.setText(progress_value);
             });
             animation2.start();
 
+            // level
             TextView level_text = root.get().findViewById(R.id.profile_level_text);
             level_text.setText(String.valueOf((int) user.LEVEL()));
+            if (user.LEVEL() >= 1000)
+                level_text.setTextSize(20);
+            else if (user.LEVEL() >= 100)
+                level_text.setTextSize(25);
 
             // full name
             TextView full_name_text = root.get().findViewById(R.id.profile_name);
@@ -396,26 +413,49 @@ public class HomeFragment extends Fragment {
             TextView rate_text = root.get().findViewById(R.id.profile_rate);
             rate_text.setText(String.valueOf(user.ASSESSOR_MARK()));
 
-
-            // activity
-            LinearLayout activity_btn = root.get().findViewById(R.id.profile_activity);
-            activity_btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onActivityClick(v, mActivity.get());
-                }
-            });
-
-            final String[] catNames = new String[]{
-                    "Рыжик", "Барсик", "Мурзик", "Мурка", "Васька",
-                    "Томасина", "Кристина", "Пушок", "Дымка", "Кузя",
-                    "Китти", "Масяня", "Симба"
-            };
-
             // skills
+            if (user.SKILLS() != null) {
+                LinearLayout linearLayoutSkills = root.get().findViewById(R.id.profile_skills);
+                linearLayoutSkills.removeAllViews();
+                View gray_line1 = GrayLine.add(mContext.get(), 3);
+                linearLayoutSkills.addView(gray_line1);
+                for(int i = 0; i < user.SKILLS().size(); i++) {
+                    View gray_line2 = GrayLine.add(mContext.get(), 3);
 
-            LinearLayout linearLayout = root.get().findViewById(R.id.profile_skills);
-            //ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(root.get(), listView, catNames);
+                    LinearLayout skillLayout = new LinearLayout(mContext.get());
+                    skillLayout.setOrientation(LinearLayout.HORIZONTAL);
+                    skillLayout.setPadding((int)myUtility.dpToPx(10), 20, 20, 5);
+                    skillLayout.setGravity(Gravity.CENTER_VERTICAL);
+                    LinearLayout.LayoutParams skillLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    skillLayout.setLayoutParams(skillLayoutParams);
+
+                    CircularProgressBar skillProgressBar = new CircularProgressBar(mContext.get());
+                    skillProgressBar.setLayoutParams(new LinearLayout.LayoutParams((int)myUtility.dpToPx(60), (int)myUtility.dpToPx(60)));
+                    skillProgressBar.setAnimationDuration(2000);
+                    skillProgressBar.showProgressText(true);
+                    skillProgressBar.showSubstrate(true);
+                    skillProgressBar.setSubstrateColor(myUtility.parseColor(R.color.light_grey));
+                    skillProgressBar.setProgressColor(myUtility.parseColor(R.color.skill_progress));
+                    skillProgressBar.setTextColor(myUtility.parseColor(R.color.colorPrimaryDark));
+                    skillProgressBar.setProgressWidth((int) myUtility.dpToPx(5));
+                    skillProgressBar.setProgress((int)(user.SKILLS().get(i)[1]) * 100 / (int)user.SKILLS().get(i)[2]);
+
+                    /*LinearLayout.LayoutParams skillLayoutParamsText = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    skillLayoutParamsText.setMargins(25, 0, 0, 100);*/
+                    TextView progressName = new TextView(mContext.get());
+                    progressName.setPadding(25, 0, 0, 10);
+                    progressName.setTextSize(24);
+                    progressName.setText((String)user.SKILLS().get(i)[0]);
+                    progressName.setLayoutParams(skillLayoutParams);
+
+                    skillLayout.addView(skillProgressBar);
+                    skillLayout.addView(progressName);
+                    linearLayoutSkills.addView(skillLayout);
+
+                    linearLayoutSkills.addView(gray_line2);
+                }
+            }
+
 
 
             cached = false;

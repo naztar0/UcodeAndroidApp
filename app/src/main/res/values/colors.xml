@@ -4,12 +4,14 @@
     <color name="colorPrimaryDark">#2b2e30</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="grey">#808080</color>
+    <color name="light_grey">#AAAAAA</color>
     <color name="progressBack">#DDD</color>
     <color name="progressFront">#36B4C8</color>
+    <color name="skill_progress">#1f77b4</color>
     <color name="profile_challenges_bg_gr_start">#9A83C1</color>
     <color name="profile_challenges_bg_gr_end">#BAB0CC</color>
     <color name="profile_white_text">#F2FFFFFF</color>
-    <color name="profile_white_text_70">#B3FFFFFF</color>
+    <color name="profile_white_text_70">#B3FFFFFF</color>/
     <color name="profile_white_text_80">#CCFFFFFF</color>
     <color name="profile_gray_text_70">#80000000</color>
     <color name="profile_black_text_80">#CC000000</color>

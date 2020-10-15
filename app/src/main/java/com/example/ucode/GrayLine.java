@@ -5,9 +5,9 @@ import android.graphics.Color;
 import android.view.View;
 
 public class GrayLine {
-    public static View add(Context c){
+    public static View add(Context c, int width){
         View view = new View(c);
-        view.setMinimumHeight(3);
+        view.setMinimumHeight(width);
         view.setBackgroundColor(Color.argb(30,0,0,0));
         return view;
     }

@@ -1,17 +1,20 @@
 package com.example.ucode;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class User implements Serializable{
     private int id, tokens, lives, toxic;
     private double level, assessorMark;
     private String firstName, lastName, username, email, location, adventure, photoUrl, phone;
     private boolean notifications_mail, notifications_push, notifications_slack;
+    private ArrayList<Object[]> skills = new ArrayList<>();
 
     public void setProfileData(int id, String username, String firstName, String lastName, String email,
                                String location, String adventure, double level, String photoUrl, String phone,
                                int tokens, int lives, double assessorMark, int toxic, Boolean notifications_mail,
-                               boolean notifications_push, boolean notifications_slack) {
+                               boolean notifications_push, boolean notifications_slack, ArrayList<Object[]> skills) {
         this.id = id;
         this.username = username;
         this.firstName = firstName;
@@ -29,6 +32,7 @@ public class User implements Serializable{
         this.notifications_mail = notifications_mail;
         this.notifications_push = notifications_push;
         this.notifications_slack = notifications_slack;
+        this.skills = skills;
     }
 
     public int ID() { return this.id; }
@@ -48,4 +52,5 @@ public class User implements Serializable{
     public boolean NOTIFICATIONS_MAIL() { return this.notifications_mail; }
     public boolean NOTIFICATIONS_PUSH() { return this.notifications_push; }
     public boolean NOTIFICATIONS_SLACK() { return this.notifications_slack; }
+    public ArrayList<Object[]> SKILLS() { return this.skills; }
 }
