@@ -27,8 +27,8 @@ import java.util.concurrent.ExecutionException;
 
 public class MyUtility {
     private static Resources mResources;
-    private Context mContext;
-    private Activity mActivity;
+    private final Context mContext;
+    private final Activity mActivity;
 
     public MyUtility(Resources resources, Context context, Activity activity) {
         mResources = resources;
@@ -36,11 +36,17 @@ public class MyUtility {
         this.mActivity = activity;
     }
 
-    public float dpToPx(float dp) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, mResources.getDisplayMetrics());
+    public int dpToPx(float dp) {
+        return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, mResources.getDisplayMetrics());
+    }
+    public static int dpToPx(float dp, Resources resources) {
+        return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
     }
     public int parseColor(int color) {
         return Color.parseColor("#" + Integer.toHexString (ContextCompat.getColor(mContext, color)));
+    }
+    public static int parseColor(int color, Context context) {
+        return Color.parseColor("#" + Integer.toHexString (ContextCompat.getColor(context, color)));
     }
 
 

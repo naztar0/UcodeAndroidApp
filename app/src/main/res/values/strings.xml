@@ -19,6 +19,7 @@
     <string name="profile_token_path">data/data/com.example.ucode/cache/token.data</string>
     <string name="home_cache_path">data/data/com.example.ucode/cache/home.data</string>
     <string name="activity_cache_path">data/data/com.example.ucode/cache/activity.data</string>
+    <string name="my_challenges_cache_path">data/data/com.example.ucode/cache/my_challenges.data</string>
     <string name="app_name">Ucode</string>
     <string name="title_home">Home</string>
     <string name="title_challenges">Challenges</string>
@@ -26,6 +27,7 @@
     <string name="description_avatar">Avatar</string>
     <string name="loading">Loading…</string>
     <string name="fill_zero">0</string>
+    <string name="none">None</string>
     <string name="progress">progress</string>
     <string name="toxic_feedbacks">toxic\nfeedbacks</string>
     <string name="ac_rate">average\ncheck rate</string>
@@ -43,4 +45,7 @@
     <string name="invalid_username">Invalid username</string>
     <string name="invalid_password">Password is not long enough</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="success">Success</string>
+    <string name="fail">Fail</string>
+    <string name="presentation_mark">Presentation mark</string>
 </resources>

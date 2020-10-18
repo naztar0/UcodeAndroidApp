@@ -26,36 +26,36 @@
     <fragment
         android:id="@+id/nav_my_challenges"
         android:name="com.example.ucode.ui.my_challenges.MyChallengesFragment"
-        android:label="@string/menu_home"
+        android:label="@string/menu_my_challenges"
         tools:layout="@layout/fragment_my_challenges" />
 
     <fragment
         android:id="@+id/nav_all_challenges"
         android:name="com.example.ucode.ui.all_challenges.AllChallengesFragment"
-        android:label="@string/activity"
+        android:label="@string/menu_all_challenges"
         tools:layout="@layout/fragment_all_challenges" />
 
     <fragment
         android:id="@+id/nav_slots"
         android:name="com.example.ucode.ui.slots.SlotsFragment"
-        android:label="@string/menu_assessments"
+        android:label="@string/menu_slots"
         tools:layout="@layout/fragment_slots" />
 
     <fragment
         android:id="@+id/nav_media"
         android:name="com.example.ucode.ui.media.MediaFragment"
-        android:label="@string/menu_home"
+        android:label="@string/menu_media"
         tools:layout="@layout/fragment_media" />
 
     <fragment
         android:id="@+id/nav_cluster"
         android:name="com.example.ucode.ui.cluster.ClusterFragment"
-        android:label="@string/activity"
+        android:label="@string/menu_cluster"
         tools:layout="@layout/fragment_cluster" />
 
     <fragment
         android:id="@+id/nav_events"
         android:name="com.example.ucode.ui.events.EventsFragment"
-        android:label="@string/menu_assessments"
+        android:label="@string/menu_events"
         tools:layout="@layout/fragment_events" />
 </navigation>

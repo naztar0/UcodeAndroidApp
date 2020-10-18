@@ -189,11 +189,13 @@ public class HomeFragment extends Fragment {
                     email = jsonData.getString("email");
 
                     JSONArray location_temp = jsonData.getJSONArray("location_users");
-                    location = ((JSONObject) location_temp.get(0)).getJSONObject("location").getString("name");
+                    int last_location = location_temp.length() - 1;
+                    location = ((JSONObject) location_temp.get(last_location)).getJSONObject("location").getString("name");
 
                     JSONArray adventure_temp = jsonData.getJSONArray("adventure_users");
-                    adventure = ((JSONObject) adventure_temp.get(0)).getString("adventure_name");
-                    level = ((JSONObject) adventure_temp.get(0)).getDouble("level");
+                    int last_adv = adventure_temp.length() - 1;
+                    adventure = ((JSONObject) adventure_temp.get(last_adv)).getString("adventure_name");
+                    level = ((JSONObject) adventure_temp.get(last_adv)).getDouble("level");
 
                     photoUrl = jsonData.getString("photo_url");
                     phone = jsonData.getString("phone");
@@ -222,7 +224,7 @@ public class HomeFragment extends Fragment {
                         skills_arr.add(arr);
                     }
                     Comparator<Object[]> comparator = (Object[] a, Object[] b) -> ((Integer)b[1]).compareTo((int)a[1]);
-                    Collections.sort(skills_arr, comparator);
+                    skills_arr.sort(comparator);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

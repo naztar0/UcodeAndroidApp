@@ -3,8 +3,11 @@
     <color name="colorPrimary">#2b2e30</color>
     <color name="colorPrimaryDark">#2b2e30</color>
     <color name="colorAccent">#03DAC5</color>
+    <color name="colorLightDefault">#FAFAFA</color>
     <color name="grey">#808080</color>
     <color name="light_grey">#AAAAAA</color>
+    <color name="grey_5">#F0F0F0</color>
+    <color name="grey_20">#C8C8C8</color>
     <color name="progressBack">#DDD</color>
     <color name="light_blue">#BBDEFB</color>
     <color name="progressFront">#36B4C8</color>
@@ -16,4 +19,11 @@
     <color name="profile_white_text_80">#CCFFFFFF</color>
     <color name="profile_gray_text_70">#80000000</color>
     <color name="profile_black_text_80">#CC000000</color>
+    <color name="challenge_success">#388e3c</color>
+    <color name="challenge_success_light">#C8E6C9</color>
+    <color name="challenge_fail">#d32f2f</color>
+    <color name="challenge_fail_light">#FFCDD2</color>
+    <color name="wrapper_green">#96bf48</color>
+    <color name="message_border">#81D4FA</color>
+    <color name="message_solid">#F0F9FE</color>
 </resources>

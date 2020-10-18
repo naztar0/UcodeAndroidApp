@@ -1,66 +1,40 @@
 package com.example.ucode.ui.activity;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.icu.text.SimpleDateFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.ucode.ActivityData;
 import com.example.ucode.Authorization;
-import com.example.ucode.CircularProgressBar;
-import com.example.ucode.GrayLine;
 import com.example.ucode.MyUtility;
 import com.example.ucode.R;
-import com.example.ucode.User;
-import com.example.ucode.ui.home.HomeFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class ActivityFragment extends Fragment {
-
-    //private ActivityViewModel activityViewModel;
-    private static Resources mResources;
 
     SwipeRefreshLayout swipeRefreshLayout;
     static boolean cached = false;
@@ -71,7 +45,7 @@ public class ActivityFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View root = inflater.inflate(R.layout.fragment_activity, container, false);
-        mResources = getResources();
+        //private ActivityViewModel activityViewModel;
         MyUtility myUtility = new MyUtility(getResources(), getContext(), getActivity());
 
         try { authorization = myUtility.authorize(); }
@@ -99,16 +73,14 @@ public class ActivityFragment extends Fragment {
     }
 
     static class GetJson extends AsyncTask<String, String, String> {
-        private WeakReference<Activity> mActivity;
-        private WeakReference<Context> mContext;
-        private WeakReference<View> root;
-        private MyUtility myUtility;
+        private final WeakReference<Activity> mActivity;
+        private final WeakReference<Context> mContext;
+        private final WeakReference<View> root;
 
         public GetJson(Activity activity, Context context, View view) {
             mActivity = new WeakReference<>(activity);
             mContext = new WeakReference<>(context);
             root = new WeakReference<>(view);
-            myUtility = new MyUtility(mResources, mContext.get(), mActivity.get());
         }
 
 
@@ -200,8 +172,8 @@ public class ActivityFragment extends Fragment {
                         String message = res.getString("message");
                         String type = res.getString("type");
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat sdf_res = new SimpleDateFormat("dd.MM.yyyy");
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                        SimpleDateFormat sdf_res = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
                         Date date = sdf.parse(created.substring(0, created.indexOf("T")));
                         String created_date = sdf_res.format(date);
                         String created_time = created.substring(created.indexOf("T") + 1, created.indexOf("T") + 6);

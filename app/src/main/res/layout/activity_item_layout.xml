@@ -16,7 +16,8 @@
         android:textAlignment="center"
         android:background="@drawable/activity_emoji_bg"
         android:paddingHorizontal="3dp"
-        android:paddingVertical="3dp"/>
+        android:paddingVertical="3dp"
+        android:textColor="#FF000000"/>
 
     <TextView
         android:id="@+id/activity_message"
@@ -38,7 +39,8 @@
         app:layout_constraintStart_toEndOf="@id/activity_emoji"
         app:layout_constraintTop_toBottomOf="@id/activity_message"
         android:paddingHorizontal="15dp"
-        android:textSize="15sp"/>
+        android:textSize="15sp"
+        android:textColor="@color/grey"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
