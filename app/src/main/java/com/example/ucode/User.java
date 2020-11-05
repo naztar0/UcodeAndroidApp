@@ -4,15 +4,15 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class User implements Serializable{
+public class User implements Serializable {
     private int id, tokens, lives, toxic;
     private double level, assessorMark;
-    private String firstName, lastName, username, email, location, adventure, photoUrl, phone;
+    private String firstName, lastName, username, email, location, adventure, photoUrl, phone, workplace;
     private boolean notifications_mail, notifications_push, notifications_slack;
     private ArrayList<Object[]> skills = new ArrayList<>();
 
     public void setProfileData(int id, String username, String firstName, String lastName, String email,
-                               String location, String adventure, double level, String photoUrl, String phone,
+                               String location, String adventure, double level, String photoUrl, String phone, String workplace,
                                int tokens, int lives, double assessorMark, int toxic, Boolean notifications_mail,
                                boolean notifications_push, boolean notifications_slack, ArrayList<Object[]> skills) {
         this.id = id;
@@ -25,6 +25,7 @@ public class User implements Serializable{
         this.level = level;
         this.photoUrl = "https://lms.ucode.world/api/" + photoUrl;
         this.phone = phone;
+        this.workplace = workplace;
         this.tokens = tokens;
         this.lives = lives;
         this.assessorMark = assessorMark;
@@ -45,6 +46,7 @@ public class User implements Serializable{
     public double LEVEL() { return this.level; }
     public String PHOTO_URL() { return this.photoUrl; }
     public String PHONE() { return this.phone; }
+    public String WORKPLACE() { return this.workplace; }
     public int TOKENS() { return this.tokens; }
     public int LIVES() { return this.lives; }
     public double ASSESSOR_MARK() { return this.assessorMark; }

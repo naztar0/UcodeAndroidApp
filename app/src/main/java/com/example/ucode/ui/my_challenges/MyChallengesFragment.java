@@ -4,14 +4,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.icu.text.SimpleDateFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -33,9 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -59,7 +54,7 @@ public class MyChallengesFragment extends Fragment {
 
         final String request_url = "https://lms.ucode.world/api/v0/frontend/user/self/";
 
-        final MyChallengesFragment.GetJson getJson = new MyChallengesFragment.GetJson(getActivity(), getContext(), root);
+        final GetJson getJson = new GetJson(getActivity(), getContext(), root);
         getJson.execute(request_url, "authorization", authorization.getToken());
 
         // refresh
@@ -72,14 +67,14 @@ public class MyChallengesFragment extends Fragment {
 
     private void refreshData(Activity activity, Context context, View view, String... params) {
         refresh = true;
-        MyChallengesFragment.GetJson getJson = new MyChallengesFragment.GetJson(activity, context, view);
+        GetJson getJson = new GetJson(activity, context, view);
         getJson.execute(params[0], params[1], params[2]);
     }
 
     static class GetJson extends AsyncTask<String, String, String> {
-        private WeakReference<Activity> mActivity;
-        private WeakReference<Context> mContext;
-        private WeakReference<View> root;
+        private final WeakReference<Activity> mActivity;
+        private final WeakReference<Context> mContext;
+        private final WeakReference<View> root;
 
         public GetJson(Activity activity, Context context, View view) {
             mActivity = new WeakReference<>(activity);
@@ -174,7 +169,9 @@ public class MyChallengesFragment extends Fragment {
                         JSONObject res = jsonArray.getJSONObject(i);
                         JSONObject challenge = res.getJSONObject("challenge");
                         int id = res.getInt("id");
-                        int mark = res.getInt("mark");
+                        int mark = 0;
+                        if (!res.isNull("mark"))
+                            mark = res.getInt("mark");
                         String status = res.getString("status");
                         String title = challenge.getString("title");
 
@@ -209,11 +206,11 @@ public class MyChallengesFragment extends Fragment {
                 if (data_arr.get(i)[3].equals("finished"))
                     statuses.add(String.valueOf((int)data_arr.get(i)[2]));
                 else
-                    statuses.add((String) data_arr.get(i)[3]);
+                    statuses.add(((String)data_arr.get(i)[3]).replace("_", " "));
             }
 
             List<HashMap<String,String>> hashMaps = new ArrayList<>();
-            for (int i = 0; i < 20; i++){
+            for (int i = 0; i < data_arr.size(); i++) {
                 HashMap<String, String> hm = new HashMap<>();
                 hm.put("title", titles.get(i));
                 hm.put("status", statuses.get(i));
@@ -242,10 +239,8 @@ public class MyChallengesFragment extends Fragment {
                 mContext.get().startActivity(intent);
             });
 
-
             cached = false;
             refresh = false;
         }
     }
-
 }

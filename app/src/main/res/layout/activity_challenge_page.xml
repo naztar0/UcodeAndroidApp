@@ -152,6 +152,54 @@
             android:textSize="20sp"
             android:textStyle="bold"/>
 
+        <Button
+            android:id="@+id/challenge_finish_button"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:layout_constraintTop_toBottomOf="@id/challenge_team_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="20dp"
+            android:text="@string/finish"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/profile_white_text"
+            android:background="@drawable/ripple_dark_bg"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/challenge_give_up_button"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:layout_constraintTop_toBottomOf="@id/challenge_finish_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="20dp"
+            android:text="@string/give_up"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/profile_white_text"
+            android:background="@drawable/ripple_red2_bg"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/challenge_reflection_button"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:layout_constraintTop_toBottomOf="@id/challenge_give_up_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="20dp"
+            android:text="@string/reflection"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/profile_white_text"
+            android:background="@drawable/ripple_dark_bg"
+            android:visibility="gone"/>
+
         <LinearLayout
             android:id="@+id/past_assessments_layout"
             android:layout_width="match_parent"
@@ -240,7 +288,23 @@
                                 android:layout_marginEnd="3dp"
                                 android:layout_marginBottom="3dp"
                                 android:text="100"/>
-                            </RelativeLayout>
+                        </RelativeLayout>
+                        <RelativeLayout
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="100dp">
+
+                        <com.example.ucode.CircularProgressBar
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:layout_marginEnd="3dp"
+                            android:layout_marginBottom="3dp"
+                            android:text="5.0"/>
+                    </RelativeLayout>
                     </RelativeLayout>
                     <TextView
                         android:layout_width="wrap_content"
@@ -249,6 +313,135 @@
                         android:text="Very very nice good and excellent!!!"/>
                 </LinearLayout>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="15dp"
+                android:paddingHorizontal="10dp"
+                android:gravity="bottom"
+                android:clickable="true"
+                android:focusable="true">
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="10dp"
+                    android:background="@drawable/ripple_grey_border">
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        app:cardCornerRadius="20dp"
+                        android:layout_gravity="center">
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/default_avatar"
+                            android:contentDescription="@string/fill_zero"/>
+                    </androidx.cardview.widget.CardView>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="45dp"
+                        android:layout_centerHorizontal="true"
+                        android:text="anevodnich"
+                        android:textSize="12sp"
+                        android:textAlignment="center"/>
+                </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="10dp"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="10dp"
+                    android:background="@drawable/challenge_feedback_text">
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <RelativeLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp">
+
+                            <com.example.ucode.CircularProgressBar
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"/>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:layout_marginEnd="3dp"
+                                android:layout_marginBottom="3dp"
+                                android:text="100"/>
+                        </RelativeLayout>
+                        <RelativeLayout
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginStart="50dp">
+
+                            <com.example.ucode.CircularProgressBar
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"/>
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:layout_marginEnd="3dp"
+                                android:layout_marginBottom="3dp"
+                                android:text="100"/>
+                        </RelativeLayout>
+                    </RelativeLayout>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="5dp"
+                            android:paddingHorizontal="10dp"
+                            android:textSize="16sp"
+                            android:text="How well did the assessor communicate?"/>
+
+                        <SeekBar
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:max="5"
+                            android:progress="3" />
+
+                        <CheckBox
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:textSize="16sp"
+                            android:text="Toxic" />
+
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="10dp"
+                            android:background="@drawable/border_grey"
+                            android:hint="Comment" />
+
+                        <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="40dp"
+                            android:layout_marginTop="10dp"
+                            android:text="Submit"
+                            android:textSize="16sp"
+                            android:textAllCaps="false"
+                            android:textColor="@color/profile_white_text"
+                            android:background="@drawable/ripple_dark_bg"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
         </LinearLayout>
 
         <TextView

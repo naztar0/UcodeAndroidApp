@@ -225,6 +225,9 @@ public class ActivityFragment extends Fragment {
                     case "made_assessment":
                         emoji_arr.add("\uD83D\uDCE4");
                         break;
+                    case "give_up_challenge":
+                        emoji_arr.add("\uD83D\uDE14");
+                        break;
                     default:
                         emoji_arr.add(" ");
                         break;

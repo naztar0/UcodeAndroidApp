@@ -2,8 +2,9 @@
 <resources>
     <color name="colorPrimary">#2b2e30</color>
     <color name="colorPrimaryDark">#2b2e30</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorAccent">#00BFAD</color>
     <color name="colorLightDefault">#FAFAFA</color>
+    <color name="transparent">#00000000</color>
     <color name="grey">#808080</color>
     <color name="light_grey">#AAAAAA</color>
     <color name="grey_5">#F0F0F0</color>
@@ -12,6 +13,10 @@
     <color name="light_blue">#BBDEFB</color>
     <color name="progressFront">#36B4C8</color>
     <color name="skill_progress">#1f77b4</color>
+    <color name="cyan">#36B4C8</color>
+    <color name="cyan_dark">#058EA3</color>
+    <color name="purple">#7E57C2</color>
+    <color name="purple_dark">#6A1B9A</color>
     <color name="profile_challenges_bg_gr_start">#9A83C1</color>
     <color name="profile_challenges_bg_gr_end">#BAB0CC</color>
     <color name="profile_white_text">#F2FFFFFF</color>
@@ -23,6 +28,7 @@
     <color name="challenge_success_light">#C8E6C9</color>
     <color name="challenge_fail">#d32f2f</color>
     <color name="challenge_fail_light">#FFCDD2</color>
+    <color name="challenge_give_up">#E36C6C</color>
     <color name="wrapper_green">#96bf48</color>
     <color name="message_border">#81D4FA</color>
     <color name="message_solid">#F0F9FE</color>

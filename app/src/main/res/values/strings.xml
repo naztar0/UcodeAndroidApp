@@ -15,6 +15,7 @@
     <string name="menu_media">Media</string>
     <string name="menu_cluster">Cluster</string>
     <string name="menu_events">Events</string>
+    <string name="profile_photo_cache_path">data/data/com.example.ucode/cache/avatar.png</string>
     <string name="auth_data_cache_path">data/data/com.example.ucode/cache/auth.data</string>
     <string name="profile_token_path">data/data/com.example.ucode/cache/token.data</string>
     <string name="home_cache_path">data/data/com.example.ucode/cache/home.data</string>
@@ -47,5 +48,15 @@
     <string name="login_failed">"Login failed"</string>
     <string name="success">Success</string>
     <string name="fail">Fail</string>
+    <string name="bool_true">True</string>
+    <string name="bool_false">False</string>
     <string name="presentation_mark">Presentation mark</string>
+    <string name="finish">finish</string>
+    <string name="give_up">give up</string>
+    <string name="reflection">reflection</string>
+    <string name="finish_assessment">Finish assessment</string>
+    <string name="search">Search</string>
+    <string name="comment">Comment</string>
+    <string name="toxic">Toxic</string>
+    <string name="submit">Submit</string>
 </resources>

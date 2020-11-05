@@ -236,7 +236,7 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/profile_phone_layout"
+                        android:id="@+id/profile_workplace_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
@@ -248,7 +248,35 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/profile_location_layout"
-                        android:visibility="gone">
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:contentDescription="@string/fill_zero"
+                            android:src="@drawable/ic_baseline_desktop_mac_24" />
+
+                        <TextView
+                            android:id="@+id/profile_workplace"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:text="@string/fill_zero" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/profile_phone_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="15dp"
+                        android:layout_centerHorizontal="true"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="3dp"
+                        android:background="@drawable/home_profile_strings_bg"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/profile_workplace_layout">
 
                         <ImageView
                             android:layout_width="wrap_content"
@@ -266,6 +294,7 @@
                             android:paddingTop="1dp"
                             android:text="@string/fill_zero" />
                     </LinearLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 

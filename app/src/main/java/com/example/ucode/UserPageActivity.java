@@ -138,10 +138,10 @@ public class UserPageActivity extends AppCompatActivity {
             String username = null, first_name = null, last_name = null, email = null,
                     location = null, adventure = null, photoUrl = null, phone = null,
                     github_link = null, facebook_link = null, instagram_link = null,
-                    linkedin_link = null;
+                    linkedin_link = null, workplace = null;
             int user_id = 0, tokens = 0, lives = 0, toxic = 0;
             double level = 0, assessor_mark = 0;
-            boolean n_mail = false, n_push = false, n_slack = false, socials = false;
+            boolean socials = false;
             ArrayList<Object[]> skills_arr = null;
             try {
                 user_id = jsonData.getInt("id");
@@ -160,7 +160,8 @@ public class UserPageActivity extends AppCompatActivity {
                 level = ((JSONObject) adventure_temp.get(last_adv)).getDouble("level");
 
                 photoUrl = jsonData.getString("photo_url");
-                phone = jsonData.getString("phone");
+                if (!jsonData.isNull("phone"))
+                    phone = jsonData.getString("phone");
                 if (!jsonData.isNull("socials")) {
                     socials = true;
                     JSONObject socialsJson = jsonData.getJSONObject("socials");
@@ -169,6 +170,8 @@ public class UserPageActivity extends AppCompatActivity {
                     instagram_link = socialsJson.getString("instagram");
                     linkedin_link = socialsJson.getString("linkedin");
                 }
+                if (!jsonData.isNull("current_workplace"))
+                    workplace = jsonData.getString("current_workplace");
 
                 JSONArray jsonArray = jsonData.getJSONArray("skill_users");
                 skills_arr = new ArrayList<>();
@@ -191,8 +194,8 @@ public class UserPageActivity extends AppCompatActivity {
             }
 
             user.setProfileData(user_id, username, first_name, last_name, email,
-                    location, adventure, level, photoUrl, phone,
-                    tokens, lives, assessor_mark, toxic, n_mail, n_push, n_slack, skills_arr);
+                    location, adventure, level, photoUrl, phone, workplace,
+                    tokens, lives, assessor_mark, toxic, false, false, false, skills_arr);
 
             if (newToken)
                 MyUtility.saveToken(authorization);
@@ -210,7 +213,7 @@ public class UserPageActivity extends AppCompatActivity {
 
             CircularProgressBar circularProgressBar = activity.findViewById(R.id.circular_progress);
             circularProgressBar.setAnimationDuration(1900);
-            circularProgressBar.setProgressWidth((int) myUtility.dpToPx(6));
+            circularProgressBar.setProgressWidth(myUtility.dpToPx(6));
             circularProgressBar.setProgress(progress);
             circularProgressBar.setProgressColor(myUtility.parseColor(R.color.progressFront));
 
@@ -253,6 +256,7 @@ public class UserPageActivity extends AppCompatActivity {
                 ImageView facebook_icon = activity.findViewById(R.id.icon_facebook);
                 ImageView instagram_icon = activity.findViewById(R.id.icon_instagram);
                 ImageView linkedin_icon = activity.findViewById(R.id.icon_linkedin);
+                assert github_link != null;
                 if (!github_link.equals("")) {
                     String finalGithub_link = github_link;
                     github_icon.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.icon_github));
@@ -261,6 +265,7 @@ public class UserPageActivity extends AppCompatActivity {
                         activity.startActivity(browserIntent);
                     });
                 }
+                assert facebook_link != null;
                 if (!facebook_link.equals("")) {
                     String finalFacebook_link = facebook_link;
                     facebook_icon.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.icon_facebook));
@@ -269,6 +274,7 @@ public class UserPageActivity extends AppCompatActivity {
                         activity.startActivity(browserIntent);
                     });
                 }
+                assert instagram_link != null;
                 if (!instagram_link.equals("")) {
                     String finalInstagram_link = instagram_link;
                     instagram_icon.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.icon_instagram));
@@ -277,6 +283,7 @@ public class UserPageActivity extends AppCompatActivity {
                         activity.startActivity(browserIntent);
                     });
                 }
+                assert linkedin_link != null;
                 if (!linkedin_link.equals("")) {
                     String finalLinkedin_link = linkedin_link;
                     linkedin_icon.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.icon_linkedin));
@@ -287,10 +294,18 @@ public class UserPageActivity extends AppCompatActivity {
                 }
             }
 
+            // workplace
+            LinearLayout workplace_layout = activity.findViewById(R.id.profile_workplace_layout);
+            if (user.WORKPLACE() != null) {
+                TextView workplace_text = activity.findViewById(R.id.profile_workplace);
+                workplace_text.setText(user.WORKPLACE());
+            }
+            else
+                workplace_layout.setVisibility(View.GONE);
+
             // phone
             LinearLayout phone_layout = activity.findViewById(R.id.profile_phone_layout);
             if (phone != null) {
-                phone_layout.setVisibility(View.VISIBLE);
                 TextView phone_text = activity.findViewById(R.id.profile_phone);
                 phone_text.setText(phone);
                 String finalPhone = phone;
@@ -304,6 +319,8 @@ public class UserPageActivity extends AppCompatActivity {
                     activity.startActivity(intent);
                 });
             }
+            else
+                phone_layout.setVisibility(View.GONE);
 
             // skills
             if (user.SKILLS() != null) {
@@ -316,20 +333,20 @@ public class UserPageActivity extends AppCompatActivity {
 
                     LinearLayout skillLayout = new LinearLayout(activity);
                     skillLayout.setOrientation(LinearLayout.HORIZONTAL);
-                    skillLayout.setPadding((int)myUtility.dpToPx(10), 20, 20, 5);
+                    skillLayout.setPadding(myUtility.dpToPx(10), 20, 20, 5);
                     skillLayout.setGravity(Gravity.CENTER_VERTICAL);
                     LinearLayout.LayoutParams skillLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     skillLayout.setLayoutParams(skillLayoutParams);
 
                     CircularProgressBar skillProgressBar = new CircularProgressBar(activity);
-                    skillProgressBar.setLayoutParams(new LinearLayout.LayoutParams((int)myUtility.dpToPx(60), (int)myUtility.dpToPx(60)));
+                    skillProgressBar.setLayoutParams(new LinearLayout.LayoutParams(myUtility.dpToPx(60), myUtility.dpToPx(60)));
                     skillProgressBar.setAnimationDuration(2000);
                     skillProgressBar.showProgressText(true);
                     skillProgressBar.showSubstrate(true);
                     skillProgressBar.setSubstrateColor(myUtility.parseColor(R.color.light_grey));
                     skillProgressBar.setProgressColor(myUtility.parseColor(R.color.skill_progress));
                     skillProgressBar.setTextColor(myUtility.parseColor(R.color.colorPrimaryDark));
-                    skillProgressBar.setProgressWidth((int) myUtility.dpToPx(5));
+                    skillProgressBar.setProgressWidth(myUtility.dpToPx(5));
                     skillProgressBar.setProgress((int)(user.SKILLS().get(i)[1]) * 100 / (int)user.SKILLS().get(i)[2]);
 
                     TextView progressName = new TextView(activity);

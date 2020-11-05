@@ -40,7 +40,6 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class HomeFragment extends Fragment {
@@ -85,10 +84,10 @@ public class HomeFragment extends Fragment {
     }
 
     static class GetJson extends AsyncTask<String, String, String> {
-        private WeakReference<Activity> mActivity;
-        private WeakReference<Context> mContext;
-        private WeakReference<View> root;
-        private MyUtility myUtility;
+        private final WeakReference<Activity> mActivity;
+        private final WeakReference<Context> mContext;
+        private final WeakReference<View> root;
+        private final MyUtility myUtility;
 
         public GetJson(Activity activity, Context context, View view) {
             mActivity = new WeakReference<>(activity);
@@ -176,7 +175,8 @@ public class HomeFragment extends Fragment {
                 }
 
                 String username = null, first_name = null, last_name = null, email = null,
-                        location = null, adventure = null, photoUrl = null, phone = null;
+                        location = null, adventure = null, photoUrl = null, phone = null,
+                        workplace = null;
                 int user_id = 0, tokens = 0, lives = 0, toxic = 0;
                 double level = 0, assessor_mark = 0;
                 boolean n_mail = false, n_push = false, n_slack = false;
@@ -203,6 +203,8 @@ public class HomeFragment extends Fragment {
                     lives = jsonData.getInt("lives");
                     assessor_mark = jsonData.getDouble("assessor_mark");
                     toxic = jsonData.getInt("toxic_feedbacks");
+                    if (!jsonData.isNull("current_workplace"))
+                        workplace = jsonData.getString("current_workplace");
 
                     JSONObject notifications = jsonData.getJSONObject("notifications_settings");
                     n_mail = notifications.getBoolean("mail");
@@ -230,23 +232,30 @@ public class HomeFragment extends Fragment {
                 }
 
                 user.setProfileData(user_id, username, first_name, last_name, email,
-                        location, adventure, level, photoUrl, phone,
+                        location, adventure, level, photoUrl, phone, workplace,
                         tokens, lives, assessor_mark, toxic, n_mail, n_push, n_slack, skills_arr);
 
                 MyUtility.saveData(user, R.string.home_cache_path);
                 if (newToken)
                     MyUtility.saveToken(authorization);
+
+                final GetImageBitmap getImageBitmap = new GetImageBitmap(root.get());
+                getImageBitmap.execute(user.PHOTO_URL());
             }
+
             // profile image
-            final GetImageBitmap getImageBitmap = new GetImageBitmap(root.get());
-            getImageBitmap.execute(user.PHOTO_URL());
+            if (cached) {
+                Bitmap img = MyUtility.getBitmap(R.string.profile_photo_cache_path);
+                ImageView imageView = root.get().findViewById(R.id.profile_image);
+                imageView.setImageBitmap(img);
+            }
 
             // progress bar
             int progress = (int) (user.LEVEL() % 1 * 100);
 
             CircularProgressBar circularProgressBar = root.get().findViewById(R.id.circular_progress);
             circularProgressBar.setAnimationDuration(1900);
-            circularProgressBar.setProgressWidth((int)myUtility.dpToPx(6));
+            circularProgressBar.setProgressWidth(myUtility.dpToPx(6));
             circularProgressBar.setProgress(progress);
             circularProgressBar.setProgressColor(myUtility.parseColor(R.color.progressFront));
 
@@ -284,6 +293,15 @@ public class HomeFragment extends Fragment {
             TextView location_text = root.get().findViewById(R.id.profile_location);
             location_text.setText(user.LOCATION());
 
+            // workplace
+            LinearLayout workplace_layout = root.get().findViewById(R.id.profile_workplace_layout);
+            if (user.WORKPLACE() != null) {
+                TextView workplace_text = root.get().findViewById(R.id.profile_workplace);
+                workplace_text.setText(user.WORKPLACE());
+            }
+            else
+                workplace_layout.setVisibility(View.GONE);
+
             // toxic_feedbacks
             TextView toxic_text = root.get().findViewById(R.id.profile_toxic);
             toxic_text.setText(String.valueOf(user.TOXIC()));
@@ -303,20 +321,20 @@ public class HomeFragment extends Fragment {
 
                     LinearLayout skillLayout = new LinearLayout(mContext.get());
                     skillLayout.setOrientation(LinearLayout.HORIZONTAL);
-                    skillLayout.setPadding((int)myUtility.dpToPx(10), 20, 20, 5);
+                    skillLayout.setPadding(myUtility.dpToPx(10), 20, 20, 5);
                     skillLayout.setGravity(Gravity.CENTER_VERTICAL);
                     LinearLayout.LayoutParams skillLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     skillLayout.setLayoutParams(skillLayoutParams);
 
                     CircularProgressBar skillProgressBar = new CircularProgressBar(mContext.get());
-                    skillProgressBar.setLayoutParams(new LinearLayout.LayoutParams((int)myUtility.dpToPx(60), (int)myUtility.dpToPx(60)));
+                    skillProgressBar.setLayoutParams(new LinearLayout.LayoutParams(myUtility.dpToPx(60), myUtility.dpToPx(60)));
                     skillProgressBar.setAnimationDuration(2000);
                     skillProgressBar.showProgressText(true);
                     skillProgressBar.showSubstrate(true);
                     skillProgressBar.setSubstrateColor(myUtility.parseColor(R.color.light_grey));
                     skillProgressBar.setProgressColor(myUtility.parseColor(R.color.skill_progress));
                     skillProgressBar.setTextColor(myUtility.parseColor(R.color.colorPrimaryDark));
-                    skillProgressBar.setProgressWidth((int) myUtility.dpToPx(5));
+                    skillProgressBar.setProgressWidth(myUtility.dpToPx(5));
                     skillProgressBar.setProgress((int)(user.SKILLS().get(i)[1]) * 100 / (int)user.SKILLS().get(i)[2]);
 
                     /*LinearLayout.LayoutParams skillLayoutParamsText = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -335,15 +353,13 @@ public class HomeFragment extends Fragment {
                 }
             }
 
-
-
             cached = false;
             refresh = false;
         }
     }
 
     static class GetImageBitmap extends AsyncTask<String, String, Bitmap> {
-        private WeakReference<View> root;
+        private final WeakReference<View> root;
 
         public GetImageBitmap(View view) {
             root = new WeakReference<>(view);
@@ -358,7 +374,6 @@ public class HomeFragment extends Fragment {
                 URL url = new URL(strings[0]);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.connect();
-
 
                 InputStream stream = connection.getInputStream();
                 bitmap = BitmapFactory.decodeStream(stream);
@@ -376,6 +391,15 @@ public class HomeFragment extends Fragment {
         protected void onPostExecute(Bitmap img) {
             ImageView imageView = root.get().findViewById(R.id.profile_image);
             imageView.setImageBitmap(img);
+            SaveProfilePhoto saveProfilePhoto = new SaveProfilePhoto();
+            saveProfilePhoto.execute(img);
+        }
+    }
+    static class SaveProfilePhoto extends AsyncTask<Bitmap, String, Void> {
+        @Override
+        protected Void doInBackground(Bitmap... bitmap) {
+            MyUtility.saveBitmap(bitmap[0], R.string.profile_photo_cache_path, Bitmap.CompressFormat.PNG);
+            return null;
         }
     }
 }
