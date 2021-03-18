@@ -7,12 +7,12 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.icu.text.SimpleDateFormat;
 import android.util.Log;
 import android.util.TypedValue;
 
 import androidx.core.content.ContextCompat;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -28,7 +28,9 @@ import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ExecutionException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Locale;
 
 public class MyUtility {
     private static Resources mResources;
@@ -44,14 +46,23 @@ public class MyUtility {
     public int dpToPx(float dp) {
         return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, mResources.getDisplayMetrics());
     }
-    public static int dpToPx(float dp, Resources resources) {
-        return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
-    }
+//    public static int dpToPx(float dp, Resources resources) {
+//        return (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
+//    }
     public int parseColor(int color) {
         return Color.parseColor("#" + Integer.toHexString (ContextCompat.getColor(mContext, color)));
     }
-    public static int parseColor(int color, Context context) {
-        return Color.parseColor("#" + Integer.toHexString (ContextCompat.getColor(context, color)));
+//    public static int parseColor(int color, Context context) {
+//        return Color.parseColor("#" + Integer.toHexString (ContextCompat.getColor(context, color)));
+//    }
+
+    public static String[] parseDateTime(String s) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        SimpleDateFormat sdf_res = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+        Date date = sdf.parse(s.substring(0, s.indexOf("T")));
+        String begin_date = sdf_res.format(date);
+        String begin_time = s.substring(s.indexOf("T") + 1, s.indexOf("T") + 6);
+        return new String[] {begin_date, begin_time};
     }
 
     public String trimN(String s) {
@@ -67,6 +78,8 @@ public class MyUtility {
     public String[] bashCheck(String s) {
         int monoStart = s.indexOf("```bash");
         int monoEnd = s.indexOf("```\n");
+        if (s.charAt(s.length() - 1) == '`')
+            monoEnd = s.length() - 4;
         if (monoStart == -1 || monoEnd == -1)
             return null;
         String mono = s.substring(monoStart + 8, monoEnd - 1);
@@ -75,6 +88,11 @@ public class MyUtility {
         return new String[]{before, mono, after};
     }
 
+    public String trimEllipsis(String s, int n) {
+        if (s.length() > n)
+            return s.substring(0, n).concat("...");
+        return s;
+    }
 
     public static void saveData(Object object, int string_id) {
         final File file = new File(mResources.getString(string_id));
@@ -157,7 +175,7 @@ public class MyUtility {
         return bitmap;
     }
 
-    public Authorization authorize() throws InterruptedException, ExecutionException, JSONException {
+    public Authorization authorize() {
         SharedPreferences sharedPreferences = mActivity.getSharedPreferences("auth", Context.MODE_PRIVATE);
         String username = sharedPreferences.getString("username", null);
         String password = sharedPreferences.getString("password", null);
@@ -265,6 +283,7 @@ public class MyUtility {
                     errbuffer.append(errline).append("\n");
 
                 Log.d("ERR", errbuffer.toString());
+                return errbuffer.toString();
             }
             InputStream stream = connection.getInputStream();
             reader = new BufferedReader(new InputStreamReader(stream));

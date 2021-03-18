@@ -139,11 +139,11 @@ public class ChallengePageActivity extends AppCompatActivity {
                 return;
             }
 
-            JSONObject jsonData = null, scheduledJson = null, questionsJson = null;
+            JSONObject jsonData = null, /*scheduledJson = null,*/ questionsJson = null;
             try {
                 jsonData = new JSONObject(result[0]);
                 // TODO: schedule in challenge realization
-                scheduledJson = new JSONObject(result[1]);
+//                scheduledJson = new JSONObject(result[1]);
                 questionsJson = new JSONObject(result[2]);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -158,7 +158,7 @@ public class ChallengePageActivity extends AppCompatActivity {
                 JSONObject challenge = jsonData.getJSONObject("challenge");
                 String title = challenge.getString("title");
                 String description = challenge.getString("description");
-                int experience = challenge.getInt("experience");
+//                int experience = challenge.getInt("experience");
                 int mark = -1, reflection_id = 0;
                 if (!jsonData.isNull("mark"))
                     mark = jsonData.getInt("mark");
@@ -338,7 +338,7 @@ public class ChallengePageActivity extends AppCompatActivity {
                         activity.finish();
                     });
                 }
-                if (can_give_up) {
+                if (can_give_up && (status.equals("reflection") || status.equals("in_progress"))) {
                     give_up_button.setVisibility(View.VISIBLE);
                     give_up_button.setOnClickListener(v -> {
                         AlertDialog.Builder alertDialog = new AlertDialog.Builder(activity);

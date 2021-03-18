@@ -157,7 +157,11 @@ public class UserPageActivity extends AppCompatActivity {
                 JSONArray adventure_temp = jsonData.getJSONArray("adventure_users");
                 int last_adv = adventure_temp.length() - 1;
                 adventure = ((JSONObject) adventure_temp.get(last_adv)).getString("adventure_name");
-                level = ((JSONObject) adventure_temp.get(last_adv)).getDouble("level");
+                try {
+                    level = ((JSONObject) adventure_temp.get(last_adv)).getDouble("level");
+                } catch (org.json.JSONException e) {
+                    level = jsonData.getDouble("level");
+                }
 
                 photoUrl = jsonData.getString("photo_url");
                 if (!jsonData.isNull("phone"))
@@ -187,7 +191,8 @@ public class UserPageActivity extends AppCompatActivity {
                     arr[2] = max_value;
                     skills_arr.add(arr);
                 }
-                Comparator<Object[]> comparator = (Object[] a, Object[] b) -> ((Integer) b[1]).compareTo((int) a[1]);
+                Comparator<Object[]> comparator = (Object[] a, Object[] b) ->
+                        Integer.compare(((int) b[1] * 100 / (int) b[2]), (int) a[1] * 100 / (int) a[2]);
                 skills_arr.sort(comparator);
             } catch (JSONException e) {
                 e.printStackTrace();

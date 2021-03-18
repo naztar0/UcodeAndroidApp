@@ -14,6 +14,7 @@
     <string name="menu_slots">Slots</string>
     <string name="menu_media">Media</string>
     <string name="menu_cluster">Cluster</string>
+    <string name="menu_statistics">Statistics</string>
     <string name="menu_events">Events</string>
     <string name="profile_photo_cache_path">data/data/com.example.ucode/cache/avatar.png</string>
     <string name="auth_data_cache_path">data/data/com.example.ucode/cache/auth.data</string>
@@ -21,6 +22,8 @@
     <string name="home_cache_path">data/data/com.example.ucode/cache/home.data</string>
     <string name="activity_cache_path">data/data/com.example.ucode/cache/activity.data</string>
     <string name="my_challenges_cache_path">data/data/com.example.ucode/cache/my_challenges.data</string>
+    <string name="assessments_cache_path">data/data/com.example.ucode/cache/assessments.data</string>
+    <string name="statistics_cache_path">data/data/com.example.ucode/cache/statistics.data</string>
     <string name="app_name">Ucode</string>
     <string name="title_home">Home</string>
     <string name="title_challenges">Challenges</string>
@@ -59,4 +62,15 @@
     <string name="comment">Comment</string>
     <string name="toxic">Toxic</string>
     <string name="submit">Submit</string>
+    <string name="someone">Someone</string>
+    <string name="report_workplace">"Report workplace"</string>
+    <string name="cluster_total">Total: </string>
+    <string name="cluster_free">Free: </string>
+    <string name="cluster_busy">Busy: </string>
+    <string name="choose_cluster">Choose cluster</string>
+    <string name="statistics_username">Username</string>
+    <string name="statistics_level">Level</string>
+    <string name="statistics_time">Time</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

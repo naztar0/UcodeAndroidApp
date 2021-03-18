@@ -5,7 +5,6 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,17 +13,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -189,7 +183,7 @@ public class SearchActivity extends AppCompatActivity {
                     linearLayout.setLayoutParams(layoutParams);
                     linearLayout.setPadding(myUtility.dpToPx(10), myUtility.dpToPx(10), myUtility.dpToPx(10), myUtility.dpToPx(10));
                     linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-                    linearLayout.setTag((String)users.get(i)[0]);
+                    linearLayout.setTag(users.get(i)[0]);
 
                     CardView.LayoutParams cardViewParams = new CardView.LayoutParams(myUtility.dpToPx(50), myUtility.dpToPx(50));
                     cardView.setLayoutParams(cardViewParams);
@@ -199,13 +193,13 @@ public class SearchActivity extends AppCompatActivity {
                     CardView.LayoutParams imageParams = new CardView.LayoutParams(
                             CardView.LayoutParams.MATCH_PARENT, CardView.LayoutParams.MATCH_PARENT);
                     imageView.setLayoutParams(imageParams);
-                    if (((String)users.get(i)[3]).equals("https://lms.ucode.world/api/media/profile_photo/default.png")) {
+                    if ((users.get(i)[3]).equals("https://lms.ucode.world/api/media/profile_photo/default.png")) {
                         imageView.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.default_avatar));
                     }
                     else {
                         imageView.setId(i);
                         GetImageBitmap getImageBitmap = new GetImageBitmap(activity);
-                        getImageBitmap.execute((String) users.get(i)[3], Integer.toString(i));
+                        getImageBitmap.execute(users.get(i)[3], Integer.toString(i));
                     }
 
                     LinearLayout.LayoutParams textLayoutParams = new LinearLayout.LayoutParams(
@@ -220,12 +214,12 @@ public class SearchActivity extends AppCompatActivity {
                     fullNameTextView.setLayoutParams(textParams);
                     fullNameTextView.setTextSize(16);
                     fullNameTextView.setTypeface(null, Typeface.BOLD);
-                    String full_name = (String)users.get(i)[1] + " " + (String)users.get(i)[2];
+                    String full_name = users.get(i)[1] + " " + users.get(i)[2];
                     fullNameTextView.setText(full_name);
 
                     usernameTextView.setLayoutParams(textParams);
                     usernameTextView.setTextSize(16);
-                    usernameTextView.setText((String)users.get(i)[0]);
+                    usernameTextView.setText(users.get(i)[0]);
 
                     cardView.addView(imageView);
                     textLayout.addView(fullNameTextView);

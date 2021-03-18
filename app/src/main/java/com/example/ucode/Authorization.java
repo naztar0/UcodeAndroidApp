@@ -1,55 +1,40 @@
 package com.example.ucode;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ExecutionException;
-
 public class Authorization {
-    private final String username;
-    private final String password;
-    private String token;
+    private static String username;
+    private static String password;
+    private static String token;
 
     public Authorization(String username, String password) {
-        this.username = username;
-        this.password = password;
+        Authorization.username = username;
+        Authorization.password = password;
     }
 
     public String getUsername() {
-        return this.username;
+        return username;
     }
 
     public String getPassword() {
-        return this.password;
+        return password;
     }
 
     public String getToken() {
-        return this.token;
+        return token;
     }
 
     public void setToken(String token) {
-        this.token = token;
+        Authorization.token = token;
     }
 
-    public void generateAuthToken() throws ExecutionException, InterruptedException, JSONException {
+    public void generateAuthToken() {
         String url = "https://lms.ucode.world/api/frontend/o/token";
         GetToken getToken = new GetToken();
-        getToken.execute(url, "username", this.username, "password", this.password, "grant_type", "password");
-        String response = getToken.get();
-        if (response != null) {
-            JSONObject jsonObject = new JSONObject(response);
-            this.token = "Bearer " + jsonObject.getString("access_token");
-        }
+        getToken.execute(url, "username", username, "password", password, "grant_type", "password");
     }
 
 
@@ -65,8 +50,19 @@ public class Authorization {
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
+        protected void onPostExecute(String response) {
+            if (response != null) {
+                JSONObject jsonObject;
+                try {
+                    jsonObject = new JSONObject(response);
+                    token = "Bearer " + jsonObject.getString("access_token");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Authorization authorization = new Authorization(username, password);
+                authorization.setToken(token);
+                MyUtility.saveToken(authorization);
+            }
         }
     }
 }

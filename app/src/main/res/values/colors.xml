@@ -5,9 +5,11 @@
     <color name="colorAccent">#00BFAD</color>
     <color name="colorLightDefault">#FAFAFA</color>
     <color name="transparent">#00000000</color>
+    <color name="black">#000000</color>
     <color name="grey">#808080</color>
     <color name="light_grey">#AAAAAA</color>
     <color name="grey_5">#F0F0F0</color>
+    <color name="grey_10">#E1E1E1</color>
     <color name="grey_20">#C8C8C8</color>
     <color name="progressBack">#DDD</color>
     <color name="light_blue">#BBDEFB</color>
@@ -32,4 +34,10 @@
     <color name="wrapper_green">#96bf48</color>
     <color name="message_border">#81D4FA</color>
     <color name="message_solid">#F0F9FE</color>
+    <color name="gradient_blue_1">#90CAF9</color>
+    <color name="gradient_blue_2">#BBDEFB</color>
+    <color name="ripple_blue">#64B5F6</color>
+    <color name="gradient_green_1">#A5D6A7</color>
+    <color name="gradient_green_2">#C8E6C9</color>
+    <color name="ripple_green">#81C784</color>
 </resources>

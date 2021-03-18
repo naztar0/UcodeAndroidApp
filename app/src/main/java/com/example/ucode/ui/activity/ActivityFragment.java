@@ -3,7 +3,6 @@ package com.example.ucode.ui.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.icu.text.SimpleDateFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -134,7 +133,7 @@ public class ActivityFragment extends Fragment {
             if (activity == null || activity.isFinishing()) {
                 return;
             }
-            SwipeRefreshLayout swipeRefreshLayout1 = mActivity.get().findViewById(R.id.activity_refresh);
+            SwipeRefreshLayout swipeRefreshLayout1 = activity.findViewById(R.id.activity_refresh);
 
             if (!cached) {
                 if (!refresh) {
@@ -146,7 +145,7 @@ public class ActivityFragment extends Fragment {
                 }
 
                 if (result == null) {
-                    Toast.makeText(mActivity.get(), "Can't get activity data...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, "Can't get activity data...", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -157,7 +156,7 @@ public class ActivityFragment extends Fragment {
                     e.printStackTrace();
                 }
                 if (jsonData == null) {
-                    Toast.makeText(mActivity.get(), "An error occurred, please try later...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, "An error occurred, please try later...", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -172,11 +171,9 @@ public class ActivityFragment extends Fragment {
                         String message = res.getString("message");
                         String type = res.getString("type");
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                        SimpleDateFormat sdf_res = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-                        Date date = sdf.parse(created.substring(0, created.indexOf("T")));
-                        String created_date = sdf_res.format(date);
-                        String created_time = created.substring(created.indexOf("T") + 1, created.indexOf("T") + 6);
+                        String[] dateTime = MyUtility.parseDateTime(created);
+                        String created_date = dateTime[0];
+                        String created_time = dateTime[1];
                         message = message.substring(message.indexOf(" ") + 1);
 
                         String[] arr = new String[4];
@@ -247,7 +244,7 @@ public class ActivityFragment extends Fragment {
             int[] to = { R.id.activity_emoji,R.id.activity_message,R.id.activity_datetime};
 
             ListView listView = root.get().findViewById(R.id.activity_list_view);
-            SimpleAdapter simpleAdapter = new SimpleAdapter(mContext.get(), hashMaps, R.layout.activity_item_layout, from, to);
+            SimpleAdapter simpleAdapter = new SimpleAdapter(activity, hashMaps, R.layout.activity_item_layout, from, to);
             listView.setAdapter(simpleAdapter);
 
 

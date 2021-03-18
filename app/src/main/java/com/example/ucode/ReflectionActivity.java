@@ -100,15 +100,15 @@ public class ReflectionActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            String change_page = MyUtility.fetchData(params);
-            if (change_page == null) {
+            String assessment_page = MyUtility.fetchData(params);
+            if (assessment_page == null) {
                 try {authorization.generateAuthToken();}
                 catch (Exception ignore) {}
-                change_page = MyUtility.fetchData(params[0], params[1], authorization.getToken());
-                if (change_page != null)
+                assessment_page = MyUtility.fetchData(params[0], params[1], authorization.getToken());
+                if (assessment_page != null)
                     newToken = true;
             }
-            return change_page;
+            return assessment_page;
         }
 
         @Override
@@ -125,9 +125,10 @@ public class ReflectionActivity extends AppCompatActivity {
                 pd.dismiss();
 
             if (result == null) {
-                Toast.makeText(activity, "Can't get reflection data...", Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, "Can't get assessment data...", Toast.LENGTH_LONG).show();
                 return;
             }
+            Log.d("RESULT", result);
 
             JSONObject jsonData = null;
             try {
@@ -615,18 +616,9 @@ public class ReflectionActivity extends AppCompatActivity {
     }
     static class FinishReflection extends AsyncTask<JSONObject, String, String> {
         WeakReference<Activity> mActivity;
-        ProgressDialog pd;
 
         FinishReflection (Activity activity) {
             mActivity = new WeakReference<>(activity);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            pd = new ProgressDialog(mActivity.get());
-            pd.setMessage("Please wait");
-            pd.setCancelable(false);
-            pd.show();
         }
 
         @Override
@@ -635,10 +627,9 @@ public class ReflectionActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            if (pd.isShowing())
-                pd.dismiss();
-            Log.d("RESULT", String.valueOf(result));
+        protected void onPostExecute(String s) {
+            if (s.charAt(0) == '"')
+                Toast.makeText(mActivity.get(), s, Toast.LENGTH_LONG).show();
         }
     }
 }

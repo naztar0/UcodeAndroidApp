@@ -37,6 +37,10 @@
             android:icon="@drawable/ic_baseline_business_24"
             android:title="@string/menu_cluster"/>
         <item
+            android:id="@+id/nav_statistics"
+            android:icon="@drawable/ic_baseline_format_list_numbered_24"
+            android:title="@string/menu_statistics"/>
+        <item
             android:id="@+id/nav_events"
             android:icon="@drawable/ic_baseline_event_24"
             android:title="@string/menu_events"/>
